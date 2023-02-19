@@ -112,16 +112,19 @@ CLIENT
 
 ``` mermaid
 sequenceDiagram
-  autonumber
-  Client->>Netlink: есть че?
-  Netlink->>Client: держи IP!
-  Client->>API: Кто я?
-  API->>Client: Ты тварь дрожащая.
-  Client->>API: А какие у меня права?
-  API->>Client: Умеешь общаться с  TEAM-A
-  Client->>API: Кто такие TEAM-A?
-  API->>Client: Это четки пацаны!
-  Client->>Nftables: Ну ок добавлю правило
+    autonumber
+    Client->>Netlink: есть че?
+    Netlink->>Client: держи IP!
+    loop Healthcheck
+        Netlink->>Client: что-то обновилось
+    end
+    Client->>API: Кто я?
+    API->>Client: Ты тварь дрожащая.
+    Client->>API: А какие у меня права?
+    API->>Client: Умеешь общаться с  TEAM-A
+    Client->>API: Кто такие TEAM-A?
+    API->>Client: Это четки пацаны!
+    Client->>Nftables: Ну ок добавлю правило
 
 
 ```
