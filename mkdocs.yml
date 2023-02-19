@@ -42,7 +42,6 @@ markdown_extensions:
 plugins:
    - swagger-ui-tag
 
-
 nav:
   - About: index.md
   - Describe: introduction.md
