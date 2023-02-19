@@ -1,1 +1,1 @@
-<swagger-ui src="swagger/sw.json"/>
+<swagger-ui src="swagger/swagger.json"/>
