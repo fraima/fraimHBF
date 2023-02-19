@@ -1,0 +1,1 @@
+<swagger-ui src="swagger/sw.json"/>
