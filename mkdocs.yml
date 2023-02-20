@@ -8,7 +8,7 @@ theme:
   features:
     - content.tabs.link
 extra:
-  homepage: https://docs.fraima.io
+  homepage: https://docs.hbf.fraima.io
 
 copyright: >
   Copyright &copy; 2022 - 2023 Dobry_kot
@@ -19,17 +19,24 @@ markdown_extensions:
       use_pygments: true
       auto_title: true
 
-  - md_in_html
   - toc:
       permalink: true
       title: On this page
       permalink_title: Anchor link to this section for reference
       toc_depth: 3
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg   
   - tables
   - admonition
   - pymdownx.details
   - attr_list
   - def_list
+  - footnotes
+  - md_in_html
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tabbed:
@@ -47,3 +54,7 @@ nav:
   - Describe: introduction.md
   - Quick Install: quick_installation.md
   - Swagger: swagger.md
+  - Trubleshooting: trubleshooting.md
+
+extra_css:
+  - stylesheets/extra.css
