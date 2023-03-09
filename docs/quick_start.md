@@ -1,0 +1,143 @@
+**Как начать?**
+---------------
+
+На данный момент мы предлагаем два способа настройки нашей системы: 
+
+- Напрямую через использование API.
+- С помощью Terraform провайдера.
+
+Если вы выберете настройку через API, то вам необходимо будет создать запросы к нашему API, чтобы интегрировать систему в ваш процесс.
+
+Альтернативно, если вы выберете настройку через Terraform, то вам нужно будет воспользоваться нашим провайдером и определить конфигурацию системы в Terraform файле. Это позволит вам быстро и легко настроить систему с помощью готовых инструментов.
+
+Независимо от выбранного способа настройки, мы готовы помочь вам достичь требуемого результата и интегрировать FraimHBF в вашу инфраструктуру.
+
+
+**Пример**
+--------
+Предположим, что у нас две команды `teamA` и `teamB`, команда `teamA` пишет бекенд, а `teamB` пишет фронтенд.
+Требуется создать две виртуальные машины одну для `teamA` вторую для `teamB` и открыть доступ от `teamA/backend` до `teamB/frontend` по `80/TCP`.
+
+Для реализации данной задачи мы ввели 4 абстракции.
+
+- `unit` - владелец области (`teamA`, `teamB`)
+- `security group` - виртуальная группа области владельца в которой находятся подсети, логически сгруппированных узлов. (`frontend`, `backend`)
+- `networks` - подсети управляемых узлов.
+- `rule` - правила доступа между `security group` как в рамках одного так и в рамках разных `unit`.
+
+=== "Yandex-Cloud"
+
+    ``` terraform
+        <настройки провайдера>
+
+        # Определяем базовую виртуальную сеть, в которой будут жить ВМ.
+        resource "yandex_vpc_network" "network-1" {
+            name = "network1"
+        }
+
+        # Определяем базовую подсеть из которой будут выдаваться адреса для ВМ.
+        resource "yandex_vpc_subnet" "subnet-1" {
+            name           = "subnet1"
+            zone           = "ru-central1-a"
+            network_id     = yandex_vpc_network.network-1.id
+            v4_cidr_blocks = ["192.168.10.0/24"]
+        }
+
+        # Создает ВМ для teamA/backend
+        resource "yandex_compute_instance" "teamA_backend" {
+            name = "teamA_backend"
+
+            resources {
+                cores  = 2
+                memory = 2
+            }
+
+            boot_disk {
+                initialize_params {
+                image_id = "fd87va5cc00gaq2f5qfb"
+                }
+            }
+
+            network_interface {
+                subnet_id = yandex_vpc_subnet.subnet-1.id
+                nat       = true
+            }
+
+            metadata = {
+                ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
+            }
+        }
+
+        # Создает ВМ для teamB/frontend
+        resource "yandex_compute_instance" "teamB_frontend" {
+            name = "teamB_frontend"
+
+            resources {
+                cores  = 4
+                memory = 4
+            }
+
+            boot_disk {
+                initialize_params {
+                image_id = "fd87va5cc00gaq2f5qfb"
+                }
+            }
+
+            network_interface {
+                subnet_id = yandex_vpc_subnet.subnet-1.id
+                nat       = true
+            }
+
+            metadata = {
+                ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
+            }
+        }
+
+        # Получает локальный адрес ВМ
+        output "internal_ip_address_teamA_backend" {
+            value = yandex_compute_instance.teamA_backend.network_interface.0.ip_address
+        }
+
+        # Получает локальный адрес ВМ
+        output "internal_ip_address_teamB_frontend" {
+            value = yandex_compute_instance.teamB_frontend.network_interface.0.ip_address
+        }
+
+    ```
+
+=== "FraimHBF"
+
+    ```terraform
+         <настройки провайдера>
+
+        resource "fraima_hbf_network" "teamA_backend" {
+            name = "teamA_backend"
+            cidrs = [yandex_compute_instance.teamA_backend.network_interface.0.ip_address]
+        }
+
+        resource "fraima_hbf_network" "teamB_frontend" {
+            name = "teamB_frontend"
+            cidrs = [yandex_compute_instance.teamB_frontend.network_interface.0.ip_address]
+        }
+
+        # Создает security group "teamA_backend"
+        resource "fraima_hbf_security_group" "teamA_backend" {
+            name = "teamA_backend"
+            networks = fraima_hbf_network.teamA_backend.cidrs
+        }
+
+        # Создает security group "teamB_frontend"
+        resource "fraima_hbf_security_group" "teamB_frontend" {
+            name = "teamB_frontend"
+            networks = fraima_hbf_network.teamA_backend.cidrs
+        }
+
+        resource "fraima_hbf_rule" "backend_to_frontend" {
+            name        = "backend_to_frontend"
+            sgFrom      = fraima_hbf_security_group.teamA_backend.name
+            sgTo        = fraima_hbf_security_group.teamB_frontend.name
+            portsTo     = [80]
+
+        }
+
+    ```

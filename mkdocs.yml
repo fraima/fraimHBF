@@ -51,8 +51,9 @@ plugins:
 
 nav:
   - About: index.md
-  - Describe: introduction.md
+  - ToolSet: toolset.md
   - Quick Install: quick_installation.md
+  - Quick Start: quick_start.md
   - Swagger: swagger.md
   - Trubleshooting: trubleshooting.md
 
