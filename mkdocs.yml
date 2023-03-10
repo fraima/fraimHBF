@@ -63,6 +63,7 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 plugins:
   - swagger-ui-tag
+  - search
   # Добавляет в конце страницы информацию по дате создания и обновлению
   # - git-revision-date-localized:
   #     enable_creation_date: true
