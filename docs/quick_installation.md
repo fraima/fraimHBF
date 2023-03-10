@@ -7,9 +7,13 @@ FraimHBF Quick Installation
 
 FraimHBF совместим с  `x86_64`, `amd64`, `armhf`, `arm64`,  `s390x` архитектурами.
 
-**Nftables requirements**
+**System requirements**
 
-`nft --version >= v.1.0.2`
+`kernel >= 3.10.0`
+
+`nft --version >= v0.9.3 (Topsy)`
+
+`go version >= 1.19`
 
 **DB requirements**
 

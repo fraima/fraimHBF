@@ -1,9 +1,10 @@
+
 **Как начать?**
 ---------------
 
 На данный момент мы предлагаем два способа настройки нашей системы: 
 
-- Напрямую через использование API.
+- Напрямую через использование API. -> swagger
 - С помощью Terraform провайдера.
 
 Если вы выберете настройку через API, то вам необходимо будет создать запросы к нашему API, чтобы интегрировать систему в ваш процесс.
@@ -20,6 +21,7 @@
 
 Для реализации данной задачи мы ввели 4 абстракции.
 
+
 - `unit` - владелец области (`teamA`, `teamB`)
 - `security group` - виртуальная группа области владельца в которой находятся подсети, логически сгруппированных узлов. (`frontend`, `backend`)
 - `networks` - подсети управляемых узлов.
@@ -27,7 +29,7 @@
 
 === "Yandex-Cloud"
 
-    ``` terraform
+    ``` { .tf }
         <настройки провайдера>
 
         # Определяем базовую виртуальную сеть, в которой будут жить ВМ.
@@ -107,37 +109,57 @@
 
 === "FraimHBF"
 
-    ```terraform
-         <настройки провайдера>
+    ```{ .tf .annotate }
+        <настройки провайдера> 
 
-        resource "fraima_hbf_network" "teamA_backend" {
-            name = "teamA_backend"
-            cidrs = [yandex_compute_instance.teamA_backend.network_interface.0.ip_address]
+        locals {
+            # Заранее вычисляем список подсетей для teamA_backend
+            teamA_backend_list  = [
+                "${yandex_compute_instance.teamA_backend.network_interface.0.ip_address}/32"
+            ]   
+            # Заранее вычисляем список подсетей для teamB_frontend
+            teamB_frontend_list = [
+                "${yandex_compute_instance.teamB_frontend.network_interface.0.ip_address}/32"
+            ]  
+            # Описываем какие порты требуется открыть
+            teamA_backend_to_teamB_frontend_port_list = [80]
         }
 
+        # Создает HBF сети в которых хранятся подсети заказанных ВМ.
+        resource "fraima_hbf_network" "teamA_backend" {
+            name = "teamA_backend"
+            cidrs = local.teamA_backend_list
+        }
+
+        # Создает HBF сети в которых хранятся подсети заказанных ВМ.
         resource "fraima_hbf_network" "teamB_frontend" {
             name = "teamB_frontend"
-            cidrs = [yandex_compute_instance.teamB_frontend.network_interface.0.ip_address]
+            cidrs = local.teamB_frontend_list
         }
 
         # Создает security group "teamA_backend"
         resource "fraima_hbf_security_group" "teamA_backend" {
             name = "teamA_backend"
-            networks = fraima_hbf_network.teamA_backend.cidrs
+            networks = [
+                fraima_hbf_network.teamA_backend.name
+            ]
         }
 
         # Создает security group "teamB_frontend"
         resource "fraima_hbf_security_group" "teamB_frontend" {
             name = "teamB_frontend"
-            networks = fraima_hbf_network.teamA_backend.cidrs
+            networks = [
+                fraima_hbf_network.teamA_backend.name
+            ]
         }
 
         resource "fraima_hbf_rule" "backend_to_frontend" {
             name        = "backend_to_frontend"
             sgFrom      = fraima_hbf_security_group.teamA_backend.name
             sgTo        = fraima_hbf_security_group.teamB_frontend.name
-            portsTo     = [80]
-
+            # portsFrom - если не указать <portsFrom = "*">
+            portsTo     = local.teamA_backend_to_teamB_frontend_port_list
+            transport   = "tcp"
         }
 
     ```

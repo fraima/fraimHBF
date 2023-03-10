@@ -1,14 +1,29 @@
 site_name: My Docs
 theme:
+  icon:
+    repo: fontawesome/brands/github
   name: material
-  language: ru
+  language: en
   font:
     # text: Shantell Sans
     text: Raleway
   features:
     - content.tabs.link
+    - content.code.copy
+    - content.code.select
+    - content.code.annotate 
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.tracking
+    - navigation.instant
+    # - header.autohide
+    - navigation.footer
+    # - content.action.edit
 extra:
   homepage: https://docs.hbf.fraima.io
+
+repo_url: https://github.com/H-BF/sgroups
+repo_name: H-BF/sgroups
 
 copyright: >
   Copyright &copy; 2022 - 2023 Dobry_kot
@@ -47,15 +62,26 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
 plugins:
-   - swagger-ui-tag
+  - swagger-ui-tag
+  # Добавляет в конце страницы информацию по дате создания и обновлению
+  # - git-revision-date-localized:
+  #     enable_creation_date: true
 
 nav:
-  - About: index.md
-  - ToolSet: toolset.md
-  - Quick Install: quick_installation.md
-  - Quick Start: quick_start.md
+
+  - About: 
+    - index.md
+    - ToolSet: toolset.md
+  
+  - Getting started: 
+    - Installation: quick_installation.md
+    - Setup: quick_start.md
+    - Trubleshooting: trubleshooting.md
+    
   - Swagger: swagger.md
-  - Trubleshooting: trubleshooting.md
+  
 
 extra_css:
   - stylesheets/extra.css
+
+
