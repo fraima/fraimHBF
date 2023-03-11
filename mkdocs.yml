@@ -1,5 +1,7 @@
 site_name: My Docs
 theme:
+  # logo: pictures/logo2.jpg
+  # favicon: pictures/logo.jpg
   icon:
     repo: fontawesome/brands/github
   name: material
@@ -86,3 +88,7 @@ extra_css:
   - stylesheets/extra.css
 
 
+extra:
+  version:
+    default: stable
+    provider: mike
