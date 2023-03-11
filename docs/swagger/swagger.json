@@ -17,7 +17,7 @@
         },
         "version": "1.0"
     },
-    "host": "https://hbf.fraima.io",
+    "host": "http://193.32.219.99:9000",
     "paths": {
         "/v1/rules": {
             "post": {

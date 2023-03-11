@@ -120,46 +120,92 @@
             # Заранее вычисляем список подсетей для teamB_frontend
             teamB_frontend_list = [
                 "${yandex_compute_instance.teamB_frontend.network_interface.0.ip_address}/32"
-            ]  
-            # Описываем какие порты требуется открыть
-            teamA_backend_to_teamB_frontend_port_list = [80]
+            ]
+
+            # Описываем какие доступы требуется открыть
+            rules = [
+                {
+                    description = "Access from backend to frontend"
+                    proto       = "tcp"
+                    sg_from     = "teamA_backend"
+                    sg_to       = "teamB_frontend"
+                    ports_to    = "80"
+                }
+            ]
+
+            # Описываем какие сети у нас есть и их содержимое
+            networks = [
+                {
+                    name    = "teamA_backend"
+                    cidrs   = local.teamA_backend_list
+                },
+                {
+                    name    = "teamB_frontend"
+                    cidrs   = local.teamB_frontend_list
+                }
+
+            ]
+
+            # Описываем группы безопасности и подключенные к ней подсети
+            security_groups = [
+                {
+                    name        = "teamA_backend",
+                    networks    = "teamA_backend"
+                },
+                {
+                    name        = "teamB_frontend",
+                    networks    = "teamB_frontend"
+                },
+            ]
+
+            # Конвертируем список в словарь, для использования в for_each
+            networks_map = { for item in local.networks :
+                keys(item)[0] => values(item)[0]
+            }
+            rules_map = { for item in local.rules :
+                keys(item)[0] => values(item)[0]
+            }
+            security_groups_map = { for item in local.security_groups :
+                keys(item)[0] => values(item)[0]
+            }
         }
 
         # Создает HBF сети в которых хранятся подсети заказанных ВМ.
-        resource "fraima_hbf_network" "teamA_backend" {
-            name = "teamA_backend"
-            cidrs = local.teamA_backend_list
+        resource "sgroups_networks" "nws" {
+            for_each = local.networks_map
+
+            name     = each.value.name
+            cidrs    = each.value.cidrs
         }
 
-        # Создает HBF сети в которых хранятся подсети заказанных ВМ.
-        resource "fraima_hbf_network" "teamB_frontend" {
-            name = "teamB_frontend"
-            cidrs = local.teamB_frontend_list
-        }
-
-        # Создает security group "teamA_backend"
-        resource "fraima_hbf_security_group" "teamA_backend" {
-            name = "teamA_backend"
-            networks = [
-                fraima_hbf_network.teamA_backend.name
+        # Создает группы безопасности
+        resource "sgroups_groups" "groups" {
+            depends_on = [
+                sgroups_networks.nws
             ]
+
+            for_each    = local.security_groups_map
+
+            name        = each.value.name
+            networks    = each.value.networks
+
         }
 
-        # Создает security group "teamB_frontend"
-        resource "fraima_hbf_security_group" "teamB_frontend" {
-            name = "teamB_frontend"
-            networks = [
-                fraima_hbf_network.teamA_backend.name
+        # Создает сетевые политики
+        resource "sgroups_rules" "rules" {
+            depends_on = [
+                sgroups_groups.groups
             ]
+            for_each    = local.rules_map
+
+            proto       = each.value.proto
+            sg_from     = each.value.sg_from
+            sg_to       = each.value.sg_to
+            ports_from  = try(each.value.ports_from, "*")
+            ports_to    = try(each.value.ports_to,   "*")
         }
 
-        resource "fraima_hbf_rule" "backend_to_frontend" {
-            name        = "backend_to_frontend"
-            sgFrom      = fraima_hbf_security_group.teamA_backend.name
-            sgTo        = fraima_hbf_security_group.teamB_frontend.name
-            # portsFrom - если не указать <portsFrom = "*">
-            portsTo     = local.teamA_backend_to_teamB_frontend_port_list
-            transport   = "tcp"
-        }
+
+
 
     ```
