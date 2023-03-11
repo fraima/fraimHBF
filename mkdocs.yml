@@ -90,5 +90,5 @@ extra_css:
 
 extra:
   version:
-    default: stable
+    default: latest
     provider: mike
