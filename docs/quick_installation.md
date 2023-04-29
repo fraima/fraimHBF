@@ -1,27 +1,25 @@
-Charlotte Quick Installation
+Базовая установка
 ===========================
 
-**Prerequisites**
+Системные требования
+---------------------
 
-**OS requirements**
+!!! note "Рой совместим с  `x86_64`, `amd64`, `armhf`, `arm64`,  `s390x` архитектурами."
 
-Charlotte совместим с  `x86_64`, `amd64`, `armhf`, `arm64`,  `s390x` архитектурами.
+Для установки потребуется:
 
-**System requirements**
-
-`kernel >= 3.10.0`
+`linux kernel >= 3.10.0`
 
 `nft --version >= v0.9.3 (Topsy)`
 
 `go version >= 1.19`
 
-**DB requirements**
-
 `postgresql`
 
-**Install Charlotte**
+Сервер
+----------
 
-=== "HBF-Server"
+=== "source"
 
     ``` bash
     ## INSTALL SERVER
@@ -61,8 +59,26 @@ Charlotte совместим с  `x86_64`, `amd64`, `armhf`, `arm64`,  `s390x` �
     systemctl start charlotte-server.service
     ```
 
+=== "docker"
 
-=== "HBF-Client"
+    ``` bash
+    ```
+
+=== "deb"
+
+    ``` bash
+    ```
+
+=== "rpm"
+
+    ``` bash
+    ```
+
+Агент
+----------
+
+
+=== "source"
 
     ``` bash
     ## INSTALL CLIENT
@@ -113,6 +129,23 @@ Charlotte совместим с  `x86_64`, `amd64`, `armhf`, `arm64`,  `s390x` �
     systemctl start  charlotte-client.service
     ```
 
+=== "docker"
+
+    ``` bash
+    ```
+
+=== "deb"
+
+    ``` bash
+    ```
+
+=== "rpm"
+
+    ``` bash
+    ```
+
+Terraform провайдер
+----------
 === "Terraform provider"
 
     ``` bash
