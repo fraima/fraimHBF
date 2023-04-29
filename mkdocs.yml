@@ -92,7 +92,9 @@ nav:
   - "Информация": 
     - "О продукте": index.md
     - "Выбор инструмента": toolset.md
-    - "Архитектура": architecture.md
+    - "Архитектура": 
+      - "Абстракции": architecture_abstractions.md
+      - "Компоненты": architecture_components.md
   
   - "Настройка": 
     - "Установка": quick_installation.md
