@@ -41,8 +41,8 @@ extra:
   version:
     provider: mike
 
-repo_url: https://github.com/H-BF/sgroups
-repo_name: H-BF/sgroups
+repo_url: https://github.com/fraima/sgroups
+repo_name: fraima/sgroups
 
 copyright: >
   Copyright &copy; 2022 - 2023 Dobry_kot
@@ -97,9 +97,13 @@ nav:
       - "Компоненты": architecture_components.md
   
   - "Настройка": 
-    - "Установка": quick_installation.md
-    - Setup: quick_start.md
-    - Trubleshooting: trubleshooting.md
+    - "Установка": 
+      - "Системные требования": quick_installation_req.md
+      - "Сервер": quick_installation_server.md
+      - "Агент": quick_installation_agent.md
+      - "Terraform": quick_installation_terraform.md
+    - "Как пользоваться": quick_start.md
+    - "Отладка": trubleshooting.md
     
   - Swagger: swagger.md
   

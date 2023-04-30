@@ -11,7 +11,7 @@
 
 Альтернативно, если вы выберете настройку через Terraform, то вам нужно будет воспользоваться нашим провайдером и определить конфигурацию системы в Terraform файле. Это позволит вам быстро и легко настроить систему с помощью готовых инструментов.
 
-Независимо от выбранного способа настройки, мы готовы помочь вам достичь требуемого результата и интегрировать Charlotte в вашу инфраструктуру.
+Независимо от выбранного способа настройки, мы готовы помочь вам достичь требуемого результата и интегрировать hbf в вашу инфраструктуру.
 
 
 **Пример**
@@ -51,14 +51,14 @@
       - git clone https://github.com/H-BF/sgroups
       - cd sgroups
       - make to-nft
-      - cp bin/to-nft /usr/bin/charlotte-client
-      - chmod +x /usr/bin/charlotte-client
+      - cp bin/to-nft /usr/bin/hbf-client
+      - chmod +x /usr/bin/hbf-client
       - systemctl enable  hbf.service
       - systemctl start   hbf.service
 
     write_files:
 
-      - path: /etc/charlotte/client.yaml
+      - path: /etc/hbf/client.yaml
         owner: root:root
         permissions: '0644'
         content: |
@@ -75,7 +75,7 @@
                     address: tcp://193.32.219.99:9000
                     check-sync-status: 5s
 
-      - path: /etc/systemd/system/charlotte-client.service
+      - path: /etc/systemd/system/hbf-client.service
         owner: root:root
         permissions: '0644'
         content: |
@@ -86,7 +86,7 @@
             After=network-online.target
 
             [Service]
-            ExecStart=/usr/bin/charlotte-client -config /etc/charlotte/client.yaml
+            ExecStart=/usr/bin/hbf-client -config /etc/hbf/client.yaml
 
             Restart=always
             StartLimitInterval=0
@@ -194,7 +194,7 @@
 
     ```
 
-=== "Charlotte"
+=== "hbf"
 
     ```{ .tf .annotate }
         <настройки провайдера> 
@@ -222,10 +222,10 @@
                             ]
                         },
                         {
-                            sg_to  = "charlotte-server"
+                            sg_to  = "hbf-server"
                             access = [
                                 {
-                                    description = "access from teamA_backend to charlotte-server"
+                                    description = "access from teamA_backend to hbf-server"
                                     protocol    = "tcp"
                                     ports_to    = [
                                         9000
@@ -242,10 +242,10 @@
                     ]
                     rules = [
                         {
-                            sg_to   = "charlotte-server"
+                            sg_to   = "hbf-server"
                             access  = [
                                 {
-                                    description = "access from teamA_backend to charlotte-server"
+                                    description = "access from teamA_backend to hbf-server"
                                     protocol    = "tcp"
                                     ports_to    = [
                                         9000
@@ -256,7 +256,7 @@
                     ]
                 },
                 {
-                    name = "charlotte-server"
+                    name = "hbf-server"
                     cidrs = [
                         "193.32.219.99/32"
                     ]
@@ -303,7 +303,7 @@
                 yandex_compute_instance.team-a-backend,
                 yandex_compute_instance.team-a-frontend
             ]
-            source = "../modules/charlotte"
+            source = "../modules/hbf"
             security_groups = local.security_groups
         }
 
