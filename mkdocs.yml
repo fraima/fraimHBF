@@ -90,7 +90,7 @@ plugins:
 nav:
 
   - "Информация": 
-    - "О продукте": index.md
+    - "Введение": index.md
     - "Выбор инструмента": toolset.md
     - "Архитектура": 
       - "Абстракции": architecture_abstractions.md
