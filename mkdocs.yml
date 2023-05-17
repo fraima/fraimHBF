@@ -41,8 +41,8 @@ extra:
   version:
     provider: mike
 
-repo_url: https://github.com/fraima/sgroups
-repo_name: fraima/sgroups
+#repo_url: https://github.com/fraima/sgroups
+#repo_name: fraima/sgroups
 
 copyright: >
   Copyright &copy; 2022 - 2023 Dobry_kot
