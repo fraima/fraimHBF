@@ -91,7 +91,7 @@ nav:
 
   - "Информация": 
     - "Введение": index.md
-    - "Выбор инструмента": toolset.md
+    - "Выбор технологии": toolset.md
     - "Архитектура": 
       - "Абстракции": architecture_abstractions.md
       - "Компоненты": architecture_components.md
